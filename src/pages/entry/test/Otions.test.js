@@ -1,9 +1,10 @@
-import { render, screen } from "@testing-library/react"
+import { screen } from "@testing-library/react"
+import { renderWithContext } from "../../../test-utils/testing-library-utils"
 import Options from "../Options"
 
 describe('Testing scoop options',  () => {
   test('display images for each scoop from server', async () => {
-    render(<Options optionType={'scoops'} />)
+    renderWithContext(<Options optionType={'scoops'} />)
 
     const scoopImages = await screen.findAllByRole('img', { name: /scoop$/i })
     expect(scoopImages).toHaveLength(2)
@@ -15,7 +16,7 @@ describe('Testing scoop options',  () => {
 
 describe('Testing topping options',  () => {
   test('display images for each topping option', async () => {
-    render(<Options optionType={'toppings'} />)
+    renderWithContext(<Options optionType={'toppings'} />)
 
     const toppingImages = await screen.findAllByRole('img', { name: /topping$/i })
     expect(toppingImages).toHaveLength(3)

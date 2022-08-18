@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import OrderEntry from '../OrderEntry'
+import { screen, waitFor } from '@testing-library/react'
 import { rest } from 'msw'
 import { server } from '../../../mocks/server'
+import { renderWithContext } from '../../../test-utils/testing-library-utils'
+import OrderEntry from '../OrderEntry'
 
 test('handle errors for scoops and topping routes', async () => {
   server.resetHandlers(
@@ -13,7 +14,7 @@ test('handle errors for scoops and topping routes', async () => {
     )
   )
 
-  render (
+  renderWithContext(
     <OrderEntry/>
   )
 
