@@ -58,7 +58,7 @@ export function OrderDetailsProvider(props) {
     setTotals({
       scoops: scoopsTotal,
       toppings: toppingsTotal,
-      total: total
+      total: total.toFixed(2)
     })
   }, [optionCounts])
 

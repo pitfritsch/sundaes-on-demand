@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { OrderDetailsProvider } from '../../../contexts/OrderDetails'
 import { renderWithContext } from '../../../test-utils/testing-library-utils'
 import Options from '../Options'
+import OrderEntry from '../OrderEntry'
 
 test('update scoop subtotal when scoops change', async () => {
   render(<Options optionType='scoops' />, { wrapper: OrderDetailsProvider })
@@ -46,4 +47,74 @@ test('update toppings subtotal when toppings change', async () => {
 
   fireEvent.click(checkboxHF)
   expect(toppingsSubtotal).toHaveTextContent('$1.50')
+})
+
+describe('grand total', () => {
+
+  test('updates properly if scoops is added first', async () => {
+    renderWithContext(<OrderEntry/>)
+    const grandTotal = screen.getByRole('heading', {
+      name: /grand total: \$/i
+    })
+    expect(grandTotal).toHaveTextContent('0.00')
+
+    const vanillaInput = await screen.findByRole('spinbutton', {
+      name: 'Vanilla'
+    })
+    userEvent.clear(vanillaInput)
+    userEvent.type(vanillaInput, '2')
+    expect(grandTotal).toHaveTextContent('4.00')
+
+    const mmCheckbox = await screen.findByRole('checkbox', {
+      name: 'M&Ms'
+    })
+    userEvent.click(mmCheckbox)
+    expect(grandTotal).toHaveTextContent('5.50')
+  })
+
+  test('updates properly if toppings is added first', async () => {
+    renderWithContext(<OrderEntry/>)
+    const grandTotal = screen.getByRole('heading', {
+      name: /grand total: \$/i
+    })
+
+    const mmCheckbox = await screen.findByRole('checkbox', {
+      name: 'M&Ms'
+    })
+    userEvent.click(mmCheckbox)
+    expect(grandTotal).toHaveTextContent('1.50')
+
+    const vanillaInput = await screen.findByRole('spinbutton', {
+      name: 'Vanilla'
+    })
+    userEvent.clear(vanillaInput)
+    userEvent.type(vanillaInput, '2')
+    expect(grandTotal).toHaveTextContent('5.50')
+  })
+
+  test('updates properly if item is removed', async () => {
+    renderWithContext(<OrderEntry/>)
+    const grandTotal = screen.getByRole('heading', {
+      name: /grand total: \$/i
+    })
+
+    const mmCheckbox = await screen.findByRole('checkbox', {
+      name: 'M&Ms'
+    })
+    userEvent.click(mmCheckbox)
+
+    const vanillaInput = await screen.findByRole('spinbutton', {
+      name: 'Vanilla'
+    })
+    userEvent.clear(vanillaInput)
+    userEvent.type(vanillaInput, '2')
+    expect(grandTotal).toHaveTextContent('5.50')
+
+    userEvent.clear(vanillaInput)
+    userEvent.type(vanillaInput, '1')
+    expect(grandTotal).toHaveTextContent('3.50')
+    
+    userEvent.click(mmCheckbox)
+    expect(grandTotal).toHaveTextContent('2.00')
+  })
 })
